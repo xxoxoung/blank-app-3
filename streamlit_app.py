@@ -26,7 +26,8 @@ def search_web():
 # --------------------------------------------------------------------
 def load_pdf_files(uploaded_files):
     # 2. PDF 로더 초기화 및 문서 불러오기
-    all_documents = ["/workspaces/blank-app-3/data/Undiscovered Taipei타이베이 여행 가이드.pdf"]
+    all_documents = []
+    
     for uploaded_file in uploaded_files:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
             tmp_file.write(uploaded_file.read())
@@ -39,20 +40,20 @@ def load_pdf_files(uploaded_files):
     # 3. 텍스트를 일정 단위(chunk)로 분할하기
     #    - chunk_size: 한 덩어리의 최대 길이
     #    - chunk_overlap: 덩어리 간 겹치는 부분 길이
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 
     # 4. 분할된 문서들을 임베딩하여 벡터 DB(FAISS)에 저장하기
-    vectorstore = FAISS.from_documents(all_documents, OpenAIEmbeddings())
+        vectorstore = FAISS.from_documents(all_documents, OpenAIEmbeddings())
     # 5. 검색기(retriever) 객체 생성
     
-    retriever = vectorstore.as_retriever()
+        retriever = vectorstore.as_retriever()
 
     # 6. retriever를 LangChain Tool 형태로 변환 -> name은 pdf_search로 지정
-    retriever_tool = create_retriever_tool(
-        retriever,
-        name="pdf_search",
-        description="Search for information across all uploaded PDF documents"
-    )
+        retriever_tool = create_retriever_tool(
+            retriever,
+            name="pdf_search",
+            description="Search for information across all uploaded PDF documents"
+        )
     return retriever_tool
 
 
@@ -68,9 +69,9 @@ def build_agent(tools):
         "당신은 똑똑한 어시스턴트입니다. 당신은 두가지 도구를 사용할 수 있습니다.\n"
         "`pdf_search` : 업로드된 PDF 문서 안에서 답을 검색하는 도구 입니다.\n"
         "1. 항상 먼저 `pdf_search`를 사용하여 답을 찾으려고 하세요.\n"
-        "2. 만약 `pdf_search`에서 관련 답변을 찾지 못했거나 불충분하다면, 그 다음에 `web_search`를 사용하세요."
-        "3. 두 도구 모두 답을 제공하지 못한다면, '관련 정보를 찾을 수 없습니다.'라고 답하세요."
-        "모든 답변은 집에 있는 강아지가 말하듯이 귀엽고 친근하게 맨 끝에는 🐾을 붙여서 대답하세요."
+        "2. 만약 `pdf_search`에서 관련 답변을 찾지 못했거나 불충분하다면, 그 다음에 `web_search`를 사용하세요.\n"
+        "3. 두 도구 모두 답을 제공하지 못한다면, '관련 정보를 찾을 수 없습니다.'라고 답하세요.\n"
+        "모든 답변은 집에 있는 강아지가 말하듯이 귀엽고 친근하게 맨 끝에는 🐾을 붙여서 대답하세요.\n"
         ),
         ("placeholder", "{chat_history}"),
         ("human", "{input}"),
@@ -109,8 +110,7 @@ def ask_agent(agent_executor, question: str):
 def main():
     # 10. 여러분의 챗봇에 맞는 스타일로 변경하기
     st.set_page_config(page_title="타이베이 맛집 마스터", layout="wide", page_icon="🐶")
-    st.image('data/dog.jpg', width=500)
-    st.markdown('---')
+    st.image('data/dog_cook.png', width=300)
     st.title("타이베이 맛집이 궁금해?🐾")  
 
     with st.sidebar:
@@ -131,7 +131,7 @@ def main():
         if "messages" not in st.session_state:
             st.session_state["messages"] = []
 
-        user_input = st.chat_input("질문을 입력하세요")
+        user_input = st.chat_input("먹고 싶은걸 말해라🐾")
 
         if user_input:
             response = ask_agent(agent_executor, user_input)
