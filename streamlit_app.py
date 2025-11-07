@@ -124,7 +124,7 @@ def main():
         os.environ['OPENAI_API_KEY'] = openai_api
         os.environ['TAVILY_API_KEY'] = tavily_api
 
-        tools = [search_web()]
+        tools = [search_web(), load_pdf_files(pdf_docs)]
         if pdf_docs:
             tools.append(load_pdf_files(pdf_docs))
 
