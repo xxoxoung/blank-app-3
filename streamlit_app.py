@@ -20,6 +20,7 @@ def search_web():
         k=6,
         name="web_search"
     )
+    return search_tool
 
 # --------------------------------------------------------------------
 # 2. PDF Tool
@@ -40,12 +41,13 @@ def load_pdf_files(uploaded_files):
     # 3. 텍스트를 일정 단위(chunk)로 분할하기
     #    - chunk_size: 한 덩어리의 최대 길이
     #    - chunk_overlap: 덩어리 간 겹치는 부분 길이
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+        splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+        all_documents = loader.load_and_split(splitter)
 
     # 4. 분할된 문서들을 임베딩하여 벡터 DB(FAISS)에 저장하기
         vectorstore = FAISS.from_documents(all_documents, OpenAIEmbeddings())
+
     # 5. 검색기(retriever) 객체 생성
-    
         retriever = vectorstore.as_retriever()
 
     # 6. retriever를 LangChain Tool 형태로 변환 -> name은 pdf_search로 지정
