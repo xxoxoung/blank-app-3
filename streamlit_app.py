@@ -44,9 +44,10 @@ def load_pdf_files(uploaded_files):
         splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
         all_documents = loader.load_and_split(splitter)
 
+
     # 4. 분할된 문서들을 임베딩하여 벡터 DB(FAISS)에 저장하기
         vectorstore = FAISS.from_documents(all_documents, OpenAIEmbeddings())
-
+        
     # 5. 검색기(retriever) 객체 생성
         retriever = vectorstore.as_retriever()
 
@@ -124,7 +125,7 @@ def main():
         os.environ['OPENAI_API_KEY'] = openai_api
         os.environ['TAVILY_API_KEY'] = tavily_api
 
-        tools = [search_web(), load_pdf_files(pdf_docs)]
+        tools = [search_web()]
         if pdf_docs:
             tools.append(load_pdf_files(pdf_docs))
 
